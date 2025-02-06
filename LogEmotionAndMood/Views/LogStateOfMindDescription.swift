@@ -1,0 +1,148 @@
+//
+//  LogStateOfMindDescription.swift
+//  LogEmotionAndMood
+//
+//  Created by Ngoni Katsidzira  on 5/2/2025.
+//
+
+import SwiftUI
+import HealthKit
+
+struct LogStateOfMindDescription: View {
+    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @State private var isShowingMore = false
+    let adaptiveColumns = [GridItem(.adaptive(minimum: 75, maximum: 85))]
+    
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Circle().foregroundStyle(logStateOfMindModel.faceColor)
+                .frame(width: 300, height: 300)
+                .blur(radius: 200)
+                .offset(x: 30, y: 30)
+            VStack {
+                ScrollView(showsIndicators: false) {
+                    IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood, animateIcon: false, size: .medium)
+                    Text(logStateOfMindModel.feeling)
+                        .foregroundStyle(logStateOfMindModel.faceColor)
+                        .font(.title.bold())
+                        .padding(.vertical)
+                    
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("Tell me,")
+                                .font(.title)
+                            Text("Ngoni")
+                                .font(.largeTitle)
+                                .foregroundStyle(logStateOfMindModel.faceColor)
+                            Spacer()
+                        }
+                        .fontWeight(.medium)
+                        .padding(.vertical)
+                        
+                        Text("What best describes this feeling?")
+                            .fontWeight(.medium)
+                        
+                        Divider()
+                            .padding(.vertical)
+                        
+                        FlowLayoutView(items: logStateOfMindModel.allLabels) { label in
+                            MoodLabelItem(
+                                selectedItems: $logStateOfMindModel.selectedLabels,
+                                item: label,
+                                text: label.rawValue,
+                                faceColor: logStateOfMindModel.faceColor
+                            )
+                        }
+                        
+                        Button {
+                            isShowingMore = true
+                        } label: {
+                            HStack {
+                                Text("Show More")
+                                Image(systemName: "chevron.right")
+                                    .font(.callout)
+                            }
+                        }
+                        .foregroundStyle(.secondary)
+                        .fontWeight(.medium)
+                        .padding(.vertical)
+                        
+                    }
+                    
+
+                }
+                
+                NavigationLink(destination: LogStateOfMindAssociation(
+                    logStateOfMindModel: $logStateOfMindModel
+                )) {
+                    Text("Next")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .contentShape(RoundedRectangle(cornerRadius: 12.0))
+                }
+                .buttonStyle(.plain)
+                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
+            }
+            .padding()
+            .toolbar {
+                Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
+            }
+            .sheet(isPresented: $isShowingMore) {
+                NavigationStack {
+                    MoreStateOfMindLabels(selectedLabels: logStateOfMindModel.selectedLabels) { updatedLabels in
+                        logStateOfMindModel.selectedLabels = updatedLabels
+                    }
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        LogStateOfMindDescription(
+            logStateOfMindModel: .constant(LogStateOfMindViewModel())
+        )
+    }
+}
+
+struct MoreStateOfMindLabels: View {
+    @Environment(\.dismiss) var dismiss
+    @State var selectedLabels: Set<StateOfMindLabel>
+    var onSave: (Set<StateOfMindLabel>) -> Void
+    @State private var editMode: EditMode = .active
+    
+    var header: some View {
+        Text("What best describes this feeling?")
+            .font(.callout.weight(.semibold))
+            .textCase(.none)
+            .foregroundColor(.primary)
+    }
+    
+    var body: some View {
+        List(selection: $selectedLabels) {
+            Section(header: header) {
+                ForEach(StateOfMindLabel.allCases, id: \.self) { label in
+                    Text(label.rawValue)
+                }
+            }
+        }
+        .environment(\.editMode, $editMode)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Cancel") { dismiss() }
+                    .tint(.red)
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Done") {
+                    onSave(selectedLabels)
+                    dismiss()
+                }
+            }
+        }
+    }
+}
+
