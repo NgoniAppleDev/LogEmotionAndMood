@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LogStateOfMindView: View {
+    @Environment(\.dismiss) var dismiss
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
     var bigPrevDate: Date? = nil
     var isPrevLog: Bool = false
@@ -52,19 +53,27 @@ struct LogStateOfMindView: View {
                 
                 VStack(alignment: .leading, spacing: 20) {
                     Group {
-                        NavigationLink(destination: LogEmotion(logStateOfMindModel: $logStateOfMindModel, prevDate: bigPrevDate ?? Date())) {
+                        NavigationLink(destination: LogEmotion(
+                            logStateOfMindModel: $logStateOfMindModel,
+                            prevDate: bigPrevDate ?? Date(),
+                            isPrevLog: true
+                        )) {
                             ChoiceCard(
                                 labelText: "Emotion",
                                 labelIcon: "clock",
-                                cardText: bigPrevDate != nil ? "How you feel at this very moment." : "How you felt in a previous moment."
+                                cardText: bigPrevDate == nil ? "How you feel at this very moment." : "How you felt in a previous moment."
                             )
                         }
                         
-                        NavigationLink(destination: LogMood(logStateOfMindModel: $logStateOfMindModel, prevDate: bigPrevDate ?? Date())) {
+                        NavigationLink(destination: LogMood(
+                            logStateOfMindModel: $logStateOfMindModel,
+                            prevDate: bigPrevDate ?? Date(),
+                            isPrevLog: false
+                        )) {
                             ChoiceCard(
                                 labelText: "Mood",
                                 labelIcon: "sunset.fill",
-                                cardText: bigPrevDate != nil ? "How you've felt the whole day" : "How you felt overall that day.",
+                                cardText: bigPrevDate == nil ? "How you've felt the whole day" : "How you felt overall that day.",
                                 showDate: bigPrevDate != nil ? false : true
                             )
                         }
@@ -76,7 +85,10 @@ struct LogStateOfMindView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
+                Button("Cancel") {
+                    logStateOfMindModel.cancelStateOfMindFlow()
+                    dismiss()
+                }
                     .foregroundStyle(.primary)
             }
         }

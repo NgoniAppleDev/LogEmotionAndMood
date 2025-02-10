@@ -14,6 +14,7 @@ struct ClickedDate: Identifiable {
 
 struct ReadStateOfMindData: View {
     @State var readStateOfMindModel: ReadStateOfMindViewModel = .init()
+    @Binding var logStateOfMindModel: LogStateOfMindViewModel
     @State private var clickedDate: ClickedDate?
     
     var body: some View {
@@ -45,7 +46,11 @@ struct ReadStateOfMindData: View {
         }
         .sheet(item: $clickedDate) { date in
             NavigationStack {
-                StateOfMindForADayView(readStateOfMindModel: readStateOfMindModel, clickedDate: date)
+                StateOfMindForADayView(
+                    logStateOfMindModel: $logStateOfMindModel,
+                    readStateOfMindModel: readStateOfMindModel,
+                    clickedDate: date
+                )
             }
         }
         .navigationTitle("Read Data")
@@ -55,7 +60,10 @@ struct ReadStateOfMindData: View {
 
 #Preview {
     NavigationStack {
-        ReadStateOfMindData(readStateOfMindModel: ReadStateOfMindViewModel())
+        ReadStateOfMindData(
+            readStateOfMindModel: ReadStateOfMindViewModel(),
+            logStateOfMindModel: .constant(LogStateOfMindViewModel())
+        )
     }
 }
 

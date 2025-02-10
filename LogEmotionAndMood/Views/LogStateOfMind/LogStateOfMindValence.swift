@@ -9,13 +9,18 @@ import HealthKit
 import SwiftUI
 
 struct LogStateOfMindValence: View {
+    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
+    var isPrevLog: Bool = false
     var navTitle: String = "Emotion"
     var kind: HKStateOfMind.Kind = .momentaryEmotion
+    let today: Date = Date()
     
     var body: some View {
-        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        print("prev date: \(prevDate), today: \(today), \(today.normalizedDate <= prevDate.normalizedDate)")
+        
+        return ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
@@ -46,22 +51,27 @@ struct LogStateOfMindValence: View {
         .navigationTitle(navTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
+            Button("Cancel") {
+                logStateOfMindModel.cancelStateOfMindFlow()
+                dismiss()
+            }
         }
     }
     
     @ViewBuilder
     func TopTitle() -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("How Do You Feel")
+            Text(isPrevLog ? "How You Felt" : "How Do You Feel")
+                .font(.title.bold())
             VStack(alignment: .leading) {
-                Text("Now:")
+                Text(isPrevLog == false ? "Now:" : kind == .momentaryEmotion ? "in the previous moment" : "that day?")
+                    .font(.title.bold())
                 Text(logStateOfMindModel.feeling)
                     .contentTransition(.numericText(value: logStateOfMindModel.moodValence))
                     .foregroundColor(logStateOfMindModel.faceColor)
+                    .font(.largeTitle.bold())
             }
         }
-        .font(.largeTitle.bold())
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -69,9 +79,7 @@ struct LogStateOfMindValence: View {
 #Preview {
     NavigationStack {
         LogStateOfMindValence(logStateOfMindModel:
-//                .constant(
             LogStateOfMindViewModel()
-//        )
         )
     }
 }

@@ -41,7 +41,7 @@ struct ContentView: View {
                     .listRowInsets(EdgeInsets())
                     
                     Section("Read State of Mind Data") {
-                        NavigationLink("See The Data", destination: ReadStateOfMindData())
+                        NavigationLink("See The Data", destination: ReadStateOfMindData(logStateOfMindModel: $logStateOfMindModel))
                             .padding()
                             .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
                     }

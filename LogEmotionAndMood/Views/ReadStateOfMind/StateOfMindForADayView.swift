@@ -10,11 +10,13 @@ import HealthKit
 
 struct StateOfMindForADayView: View {
     @Environment(\.dismiss) var dismiss
+    @Binding var logStateOfMindModel: LogStateOfMindViewModel
     var readStateOfMindModel: ReadStateOfMindViewModel
     var clickedDate: ClickedDate
     var stateOfMindForDay: ReadStateOfMindViewModel.StateOfMindForDay {
         readStateOfMindModel.stateOfMindForDay(date: clickedDate.date)
     }
+    @State private var showLogView = false
     
     //    let testStateOfMindForDay: ReadStateOfMindViewModel.StateOfMindForDay =
     //    [Date(): [
@@ -122,7 +124,9 @@ struct StateOfMindForADayView: View {
                 }
                 .padding()
                 
-                Button{} label: {
+                Button {
+                    showLogView = true
+                } label: {
                     Text("Log")
                         .font(.headline)
                         .foregroundStyle(.white)
@@ -140,12 +144,29 @@ struct StateOfMindForADayView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showLogView) {
+            NavigationStack {
+                if clickedDate.date.normalizedDate < Date().normalizedDate  {
+                    LogStateOfMindView(
+                        logStateOfMindModel: $logStateOfMindModel,
+                        bigPrevDate: clickedDate.date,
+                        isPrevLog: true
+                    )
+                } else {
+                    LogStateOfMindView(
+                        logStateOfMindModel: $logStateOfMindModel
+                    )
+                }
+            }
+            .presentationDetents([.large])
+        }
     }
 }
 
 #Preview {
     NavigationStack {
         StateOfMindForADayView(
+            logStateOfMindModel: .constant(LogStateOfMindViewModel()),
             readStateOfMindModel: ReadStateOfMindViewModel(),
             clickedDate: ClickedDate(date: Date())
         )

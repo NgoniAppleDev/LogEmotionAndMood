@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LogStateOfMindAssociation: View {
+    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
     let adaptiveColumns = [GridItem(.adaptive(minimum: 80, maximum: 90))]
@@ -90,7 +91,10 @@ struct LogStateOfMindAssociation: View {
             }
             .padding()
             .toolbar {
-                Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
+                Button("Cancel") {
+                    logStateOfMindModel.cancelStateOfMindFlow()
+                    dismiss()
+                }
             }
         }
     }

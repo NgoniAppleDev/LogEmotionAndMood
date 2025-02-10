@@ -10,9 +10,14 @@ import SwiftUI
 struct LogEmotion: View {
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
+    var isPrevLog: Bool = false
     
     var body: some View {
-        LogStateOfMindValence(logStateOfMindModel: logStateOfMindModel, prevDate: prevDate)
+        LogStateOfMindValence(
+            logStateOfMindModel: logStateOfMindModel,
+            prevDate: prevDate,
+            isPrevLog: isPrevLog
+        )
             .onAppear {
                 logStateOfMindModel.kind = .momentaryEmotion
             }

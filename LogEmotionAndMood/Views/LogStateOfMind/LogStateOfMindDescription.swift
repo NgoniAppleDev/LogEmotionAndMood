@@ -9,6 +9,7 @@ import SwiftUI
 import HealthKit
 
 struct LogStateOfMindDescription: View {
+    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
     @State private var isShowingMore = false
@@ -84,7 +85,10 @@ struct LogStateOfMindDescription: View {
             }
             .padding()
             .toolbar {
-                Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
+                Button("Cancel") {
+                    logStateOfMindModel.cancelStateOfMindFlow()
+                    dismiss()
+                }
             }
             .sheet(isPresented: $isShowingMore) {
                 NavigationStack {
