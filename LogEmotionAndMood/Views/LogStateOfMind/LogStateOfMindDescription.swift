@@ -9,7 +9,7 @@ import SwiftUI
 import HealthKit
 
 struct LogStateOfMindDescription: View {
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
     @State private var isShowingMore = false
     let adaptiveColumns = [GridItem(.adaptive(minimum: 75, maximum: 85))]
@@ -70,7 +70,7 @@ struct LogStateOfMindDescription: View {
                 }
                 
                 NavigationLink(destination: LogStateOfMindAssociation(
-                    logStateOfMindModel: $logStateOfMindModel, prevDate: prevDate
+                    logStateOfMindModel: logStateOfMindModel, prevDate: prevDate
                 )) {
                     Text("Next")
                         .font(.headline)
@@ -100,7 +100,7 @@ struct LogStateOfMindDescription: View {
 #Preview {
     NavigationStack {
         LogStateOfMindDescription(
-            logStateOfMindModel: .constant(LogStateOfMindViewModel())
+            logStateOfMindModel: LogStateOfMindViewModel()
         )
     }
 }

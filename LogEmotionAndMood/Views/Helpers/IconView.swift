@@ -39,7 +39,7 @@ struct IconView: View {
         }
         .onChange(of: selectedMood, { _, _ in
             withAnimation {
-                faceScale = 0
+                faceScale = 0.5
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 withAnimation(.easeInOut(duration: 0.2)) {

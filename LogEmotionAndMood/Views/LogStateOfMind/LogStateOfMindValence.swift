@@ -9,44 +9,28 @@ import HealthKit
 import SwiftUI
 
 struct LogStateOfMindValence: View {
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
     var navTitle: String = "Emotion"
     var kind: HKStateOfMind.Kind = .momentaryEmotion
-    @State private var sliderValue: Double = 0.0
-    
-    var TopTitle: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("How Do You Feel")
-            VStack(alignment: .leading) {
-                Text("Now:")
-                Text(logStateOfMindModel.feeling)
-                    .foregroundColor(logStateOfMindModel.faceColor)
-                    .contentTransition(.numericText())
-            }
-        }
-        .font(.largeTitle.bold())
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
     
     var body: some View {
-        ZStackWithGradient(color: MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence)) {
+        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
-                        TopTitle
-                        IconView(faceColor: MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence), selectedMood: logStateOfMindModel.selectedMood)
+                        TopTitle()
+                        IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood)
                         
-                        Slider(value: $logStateOfMindModel.moodValence, in: -1...1
-                               //                               , step: 0.25
-                        )
-                        .tint(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence))
-                        .accentColor(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence))
+                        Slider(value: $logStateOfMindModel.moodValence.animation(), in: -1...1, step: 0.25)
+                        .tint(logStateOfMindModel.faceColor)
+                        .accentColor(logStateOfMindModel.faceColor)
                     }
                     .padding()
                 }
                 
-                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: $logStateOfMindModel, prevDate: prevDate)) {
+                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: logStateOfMindModel, prevDate: prevDate)
+                ) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(logStateOfMindModel.selectedMood == Images.noneFace ? .black : .white)
@@ -54,7 +38,7 @@ struct LogStateOfMindValence: View {
                         .contentShape(RoundedRectangle(cornerRadius: 12.0))
                 }
                 .padding()
-                .background(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence), in: .rect(cornerRadius: 12.0))
+                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
                 .padding(.horizontal)
                 .buttonStyle(.plain)
             }
@@ -65,10 +49,29 @@ struct LogStateOfMindValence: View {
             Button("Cancel") { logStateOfMindModel.cancelStateOfMindFlow() }
         }
     }
+    
+    @ViewBuilder
+    func TopTitle() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("How Do You Feel")
+            VStack(alignment: .leading) {
+                Text("Now:")
+                Text(logStateOfMindModel.feeling)
+                    .contentTransition(.numericText(value: logStateOfMindModel.moodValence))
+                    .foregroundColor(logStateOfMindModel.faceColor)
+            }
+        }
+        .font(.largeTitle.bold())
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 }
 
 #Preview {
     NavigationStack {
-        LogStateOfMindValence(logStateOfMindModel: .constant(LogStateOfMindViewModel()))
+        LogStateOfMindValence(logStateOfMindModel:
+//                .constant(
+            LogStateOfMindViewModel()
+//        )
+        )
     }
 }

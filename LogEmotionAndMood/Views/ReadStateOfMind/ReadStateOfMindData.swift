@@ -35,13 +35,13 @@ struct ReadStateOfMindData: View {
             .padding()
         }
         .refreshable {
-            let _ = await readStateOfMindModel.getStateOfMindData()
+            await readStateOfMindModel.fetch()
             withAnimation {
                 readStateOfMindModel.selectedDate = Date()
             }
         }
         .task{
-            let _ = await readStateOfMindModel.getStateOfMindData()
+            await readStateOfMindModel.fetch()
         }
         .sheet(item: $clickedDate) { date in
             NavigationStack {

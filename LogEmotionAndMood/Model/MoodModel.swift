@@ -44,19 +44,19 @@ struct MoodModel: Identifiable {
         func getSelectedMood() -> Image {
             switch self {
             case .veryUnpleasant:
-                Images.unhappyFace
+                Images.veryUnpleasantFace
             case .unPleasant:
-                Images.unhappyFace
+                Images.unpleasantFace
             case .slightlyUnpleasant:
-                Images.sadFace
+                Images.slightlyUnpleasantFace
             case .neutral:
-                Images.normalFace
+                Images.neutralFace
             case .slightlyPleasant:
-                Images.goodFace
+                Images.slightlyPleasantFace
             case .pleasant:
-                Images.goodFace
+                Images.pleasantFace
             case .veryPleasant:
-                Images.happyFace
+                Images.veryPleasantFace
             }
         }
     }
@@ -65,7 +65,7 @@ struct MoodModel: Identifiable {
         -1: (
             Mood.veryUnpleasant.rawValue,
             Mood.veryUnpleasant.getColor(),
-            Mood.veryUnpleasant.getSelectedMood()
+            Images.veryUnpleasantFace2
         ),
          -0.75: (
             Mood.veryUnpleasant.rawValue,
@@ -105,7 +105,7 @@ struct MoodModel: Identifiable {
          1: (
             Mood.veryPleasant.rawValue,
             Mood.veryPleasant.getColor(),
-            Mood.veryPleasant.getSelectedMood()
+            Images.veryPleasantFace2
          )
     ]
     

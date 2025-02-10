@@ -21,7 +21,11 @@ class ReadStateOfMindViewModel {
             updateMonthDays()
         }
     }
-    private var savedStatesOfMind: [StateOfMindForDay] = []
+    private var savedStatesOfMind: [StateOfMindForDay] = [] {
+        didSet {
+            updateMonthDays()
+        }
+    }
     var monthDays = [Date]()
     
     var startOfMonth: Date = Date()

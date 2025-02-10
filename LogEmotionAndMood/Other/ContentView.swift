@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Binding var enabled: Bool
-    @State private var logStateOfMindModel: LogStateOfMindViewModel = .init()
+    @State var logStateOfMindModel: LogStateOfMindViewModel = .init()
     
     var body: some View {
         NavigationStack {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LogStateOfMindAssociation: View {
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var prevDate: Date = Date()
     let adaptiveColumns = [GridItem(.adaptive(minimum: 80, maximum: 90))]
     
@@ -98,7 +98,7 @@ struct LogStateOfMindAssociation: View {
 
 #Preview {
     LogStateOfMindAssociation(
-        logStateOfMindModel: .constant(LogStateOfMindViewModel())
+        logStateOfMindModel: LogStateOfMindViewModel()
     )
 }
 

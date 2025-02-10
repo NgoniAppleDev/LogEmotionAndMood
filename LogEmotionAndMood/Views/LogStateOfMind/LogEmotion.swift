@@ -12,7 +12,7 @@ struct LogEmotion: View {
     var prevDate: Date = Date()
     
     var body: some View {
-        LogStateOfMindValence(logStateOfMindModel: $logStateOfMindModel, prevDate: prevDate)
+        LogStateOfMindValence(logStateOfMindModel: logStateOfMindModel, prevDate: prevDate)
             .onAppear {
                 logStateOfMindModel.kind = .momentaryEmotion
             }
