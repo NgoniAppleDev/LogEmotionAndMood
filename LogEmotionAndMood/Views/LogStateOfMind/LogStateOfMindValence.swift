@@ -10,6 +10,7 @@ import SwiftUI
 
 struct LogStateOfMindValence: View {
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    var prevDate: Date = Date()
     var navTitle: String = "Emotion"
     var kind: HKStateOfMind.Kind = .momentaryEmotion
     
@@ -28,11 +29,7 @@ struct LogStateOfMindValence: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Circle().foregroundStyle(logStateOfMindModel.faceColor)
-                .frame(width: 300, height: 300)
-                .blur(radius: 200)
-                .offset(x: 30, y: 30)
+        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
@@ -45,7 +42,7 @@ struct LogStateOfMindValence: View {
                     .padding()
                 }
                 
-                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: $logStateOfMindModel)) {
+                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: $logStateOfMindModel, prevDate: prevDate)) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(logStateOfMindModel.selectedMood == Images.noneFace ? .black : .white)
@@ -67,5 +64,7 @@ struct LogStateOfMindValence: View {
 }
 
 #Preview {
-    LogStateOfMindValence(logStateOfMindModel: .constant(LogStateOfMindViewModel()))
+    NavigationStack {
+        LogStateOfMindValence(logStateOfMindModel: .constant(LogStateOfMindViewModel()))
+    }
 }

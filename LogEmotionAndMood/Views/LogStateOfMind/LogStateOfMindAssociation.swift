@@ -9,14 +9,11 @@ import SwiftUI
 
 struct LogStateOfMindAssociation: View {
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    var prevDate: Date = Date()
     let adaptiveColumns = [GridItem(.adaptive(minimum: 80, maximum: 90))]
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Circle().foregroundStyle(logStateOfMindModel.faceColor)
-                .frame(width: 300, height: 300)
-                .blur(radius: 200)
-                .offset(x: 30, y: 30)
+        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView(showsIndicators: false) {
                     IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood, animateIcon: false, size: .medium)
@@ -76,7 +73,7 @@ struct LogStateOfMindAssociation: View {
                 
                 Button {
                     Task {
-                        await logStateOfMindModel.saveStateOfMind()
+                        await logStateOfMindModel.saveStateOfMind(date: prevDate)
                         logStateOfMindModel.cancelStateOfMindFlow()
                     }
                 } label: {

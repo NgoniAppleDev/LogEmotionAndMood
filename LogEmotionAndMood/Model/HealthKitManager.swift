@@ -41,11 +41,11 @@ class HealthKitManager {
         }
     }
     
-    func createSample(for kind: HKStateOfMind.Kind, valence: Double, labels: [HKStateOfMind.Label], associations: [HKStateOfMind.Association]) async ->
+    func createSample(for kind: HKStateOfMind.Kind, date: Date = Date(), valence: Double, labels: [HKStateOfMind.Label], associations: [HKStateOfMind.Association]) async ->
     HKStateOfMind {
         await self.requestAuthorization()
         
-        return HKStateOfMind(date: Date(), kind: kind, valence: valence, labels: labels, associations: associations)
+        return HKStateOfMind(date: date, kind: kind, valence: valence, labels: labels, associations: associations)
     }
     
     func save(sample: HKSample, healthStore: HKHealthStore) async {
@@ -54,13 +54,31 @@ class HealthKitManager {
             print("Succeeded to save sample!")
         }
         catch {
+            // Handle error here.
             print("Failed to save sample: \(error.localizedDescription)")
             handleError(error: error)
-            // Handle error here.
         }
     }
     
-    func queryStateOfMindData() {}
+    func queryStateOfMindData() async -> [HKStateOfMind] {
+        do {
+            
+            let mindDescriptor = HKSampleQueryDescriptor(
+                predicates: [HKSamplePredicate.stateOfMind()],
+                sortDescriptors: []
+            )
+
+            // Launch the query and wait for the results.
+            var results: [HKStateOfMind] = []
+            results = try await mindDescriptor.result(for: healthStore)
+            
+            return results
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        return []
+    }
 
     
     func handleError(error: String) {

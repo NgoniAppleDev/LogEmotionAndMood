@@ -10,15 +10,12 @@ import HealthKit
 
 struct LogStateOfMindDescription: View {
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    var prevDate: Date = Date()
     @State private var isShowingMore = false
     let adaptiveColumns = [GridItem(.adaptive(minimum: 75, maximum: 85))]
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Circle().foregroundStyle(logStateOfMindModel.faceColor)
-                .frame(width: 300, height: 300)
-                .blur(radius: 200)
-                .offset(x: 30, y: 30)
+        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView(showsIndicators: false) {
                     IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood, animateIcon: false, size: .medium)
@@ -73,7 +70,7 @@ struct LogStateOfMindDescription: View {
                 }
                 
                 NavigationLink(destination: LogStateOfMindAssociation(
-                    logStateOfMindModel: $logStateOfMindModel
+                    logStateOfMindModel: $logStateOfMindModel, prevDate: prevDate
                 )) {
                     Text("Next")
                         .font(.headline)
