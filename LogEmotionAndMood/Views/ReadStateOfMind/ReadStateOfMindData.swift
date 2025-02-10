@@ -30,8 +30,6 @@ struct ReadStateOfMindData: View {
                         readStateOfMindModel: $readStateOfMindModel,
                         clickedDate: $clickedDate
                     )
-                    
-                    BottomContent()
                 }
             }
             .padding()
@@ -151,14 +149,6 @@ struct TopActionButtons: View {
             .background(Color(.systemBlue), in: .rect(cornerRadius: 12.0))
             
             Spacer()
-            
-//            Button{} label: {
-//                Text("Log")
-//                    .padding(12.0)
-//                    .frame(maxWidth: .infinity)
-//                    .contentShape(RoundedRectangle(cornerRadius: 12.0))
-//            }
-//            .background(Color(.systemBlue), in: .rect(cornerRadius: 12.0))
         }
         .font(.footnote.weight(.semibold))
         .foregroundStyle(.white)
@@ -212,7 +202,7 @@ struct StatesOfMindCalendarView: View {
                 DaysOfWeekView()
                 
                 if (1 <= readStateOfMindModel.calendarStartPaddings){
-                    ForEach(1...readStateOfMindModel.calendarStartPaddings, id: \.self) {index in
+                    ForEach(0...(readStateOfMindModel.calendarStartPaddings - 1), id: \.self) {index in
                         Text("")
                     }
                 }

@@ -23,9 +23,11 @@ class ReadStateOfMindViewModel {
     }
     private var savedStatesOfMind: [StateOfMindForDay] = []
     var monthDays = [Date]()
+    
+    var startOfMonth: Date = Date()
     var calendarStartPaddings: Int {
         let calendar = Calendar.current
-        let weekday = calendar.component(.weekday, from: selectedDate)
+        let weekday = calendar.component(.weekday, from: startOfMonth)
         
         switch weekday {
         case 1:
@@ -111,6 +113,8 @@ class ReadStateOfMindViewModel {
         let calendar = Calendar.current
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: selectedDate))!
         let range = calendar.range(of: .day, in: .month, for: startOfMonth)!
+        
+        self.startOfMonth = startOfMonth
         
         monthDays = range.compactMap { day -> Date? in
             calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)

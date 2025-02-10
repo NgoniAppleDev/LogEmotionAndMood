@@ -13,11 +13,12 @@ struct LogStateOfMindValence: View {
     var prevDate: Date = Date()
     var navTitle: String = "Emotion"
     var kind: HKStateOfMind.Kind = .momentaryEmotion
+    @State private var sliderValue: Double = 0.0
     
     var TopTitle: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("How Do You Feel")
-            HStack {
+            VStack(alignment: .leading) {
                 Text("Now:")
                 Text(logStateOfMindModel.feeling)
                     .foregroundColor(logStateOfMindModel.faceColor)
@@ -29,15 +30,18 @@ struct LogStateOfMindValence: View {
     }
     
     var body: some View {
-        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        ZStackWithGradient(color: MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence)) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
                         TopTitle
-                        IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood)
+                        IconView(faceColor: MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence), selectedMood: logStateOfMindModel.selectedMood)
                         
-                        Slider(value: $logStateOfMindModel.moodValence.animation(), in: -1...1, step: 0.5)
-                            .tint(logStateOfMindModel.faceColor)
+                        Slider(value: $logStateOfMindModel.moodValence, in: -1...1
+                               //                               , step: 0.25
+                        )
+                        .tint(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence))
+                        .accentColor(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence))
                     }
                     .padding()
                 }
@@ -50,7 +54,7 @@ struct LogStateOfMindValence: View {
                         .contentShape(RoundedRectangle(cornerRadius: 12.0))
                 }
                 .padding()
-                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
+                .background(MoodModel.interpolatedColor(for: logStateOfMindModel.moodValence), in: .rect(cornerRadius: 12.0))
                 .padding(.horizontal)
                 .buttonStyle(.plain)
             }
