@@ -12,13 +12,7 @@ import HealthKit
 
 @Observable
 class ReadStateOfMindViewModel {
-    struct StateForMindForDay: Identifiable {
-        let id = UUID()
-        let stateOfMind: HKStateOfMind?
-        let hasDailyMood: Bool
-        let hasEmotions: Bool
-        var allItems: [[Date: HKStateOfMind]]? = nil
-    }
+    typealias StateOfMindForDay = [Date:[HKStateOfMind]]
     
     let healthKitManager = HealthKitManager()
     
@@ -27,7 +21,7 @@ class ReadStateOfMindViewModel {
             updateMonthDays()
         }
     }
-    private var savedStatesOfMind: [Date:HKStateOfMind] = [:]
+    private var savedStatesOfMind: [StateOfMindForDay] = []
     var monthDays = [Date]()
     var calendarStartPaddings: Int {
         let calendar = Calendar.current
@@ -64,35 +58,53 @@ class ReadStateOfMindViewModel {
         return await healthKitManager.queryStateOfMindData()
     }
     
+    func stateOfMindForDay(date: Date) -> StateOfMindForDay {
+        return savedStatesOfMind.first(where: { $0.keys.contains(date.normalizedDate) }) ?? [date: []]
+    }
+    
     func areDatesOnSameDay(_ date1: Date, _ date2: Date) -> Bool {
         let calendar = Calendar.current
         return calendar.isDate(date1, inSameDayAs: date2)
     }
     
-    func stateOfMindForDay(date: Date) -> StateForMindForDay {
-        let items = savedStatesOfMind.filter { self.areDatesOnSameDay($1.endDate.normalizedDate, date.normalizedDate) }
-        
-        let dailyMood = items.first(where: { $1.kind == .dailyMood })
-        
-        let hasDailyMood = dayHasMood(states: items)
-        let hasEmotions = dayHasEmotions(states: items)
-        
-        return StateForMindForDay(stateOfMind: dailyMood?.value, hasDailyMood: hasDailyMood, hasEmotions: hasEmotions, allItems: [items])
-    }
-    
-    private func dayHasEmotions(states: [Date: HKStateOfMind]) -> Bool {
-        for (_, value) in states {
-            if value.kind == .momentaryEmotion {
-                return true
+    func dayHasEmotions(state: StateOfMindForDay) -> Bool {
+        for states in state {
+            for stateOfMind in states.value {
+                if stateOfMind.kind == .momentaryEmotion {
+                    return true
+                }
             }
         }
         
         return false
     }
     
-    private func dayHasMood(states: [Date: HKStateOfMind]) -> Bool {
-        let item = states.first(where: { $1.kind == .dailyMood })
-        return item != nil
+    func dayHasDailyMood(state: StateOfMindForDay) -> Bool {
+        for states in state {
+            for stateOfMind in states.value {
+                if stateOfMind.kind == .dailyMood {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    func getDailyMoodForDay(state: StateOfMindForDay) -> HKStateOfMind? {
+        for states in state.values {
+            for stateOfMind in states {
+                if stateOfMind.kind == .dailyMood { return stateOfMind }
+            }
+        }
+        
+        return nil
+    }
+    
+    func getDailyMoodColor(state: StateOfMindForDay) -> Color {
+        return MoodModel.moodMappings[
+            getDailyMoodForDay(state: state)?.valence ?? 0
+        ]?.faceColor ?? Color.clear
     }
     
     private func updateMonthDays() {
@@ -106,11 +118,24 @@ class ReadStateOfMindViewModel {
     }
     
     func fetch() async {
-        let states: [HKStateOfMind] = await self.getStateOfMindData()
+        let statesForDay: [HKStateOfMind] = await self.getStateOfMindData()
+        var finalData: Set<StateOfMindForDay> = []
+        var uniqueDates: Set<Date> = []
         
-        states.forEach { stateOfMind in
-            let data = Dictionary(uniqueKeysWithValues: states.map { ($0.endDate, $0) })
-            self.savedStatesOfMind = data
+        // get unique and normalized dates to use for keys of the dictionary(StateOfMindForDay)
+        statesForDay.forEach { state_ForADay in
+            uniqueDates.insert(state_ForADay.endDate.normalizedDate)
         }
+        
+        // create the StateOfMindForDay dictionary with the unique dates as keys
+        uniqueDates.forEach { date in
+            let statesForChosenDate = statesForDay.filter {
+                self.areDatesOnSameDay($0.endDate.normalizedDate, date) || self.areDatesOnSameDay($0.startDate.normalizedDate, date)
+            }
+            let dict = [date: statesForChosenDate]
+            if !finalData.contains(dict) { finalData.insert(dict) }
+        }
+        
+        self.savedStatesOfMind = Array(finalData)
     }
 }

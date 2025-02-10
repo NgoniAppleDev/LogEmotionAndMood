@@ -87,9 +87,12 @@ struct DaysOfMonthView: View {
             } label: {
                 VStack(spacing: 5) {
                     ZStack {
-                        if let stateForDay = stateOfMindForDay.stateOfMind, stateForDay.kind == .dailyMood {
+                        if readStateOfMindModel.dayHasDailyMood(state: stateOfMindForDay)
+                        {
                             Circle()
-                                .fill(MoodModel.moodMappings[stateForDay.valence]?.faceColor ?? Color.clear)
+                                .fill(
+                                    readStateOfMindModel.getDailyMoodColor(state: stateOfMindForDay)
+                                )
                                 .frame(width: 35, height: 35)
                         } else {
                             Circle()
@@ -102,10 +105,14 @@ struct DaysOfMonthView: View {
                         }
                         Text(Calendar.current.component(.day, from: dayOfMonth).description)
                             .font(.callout.weight(.bold))
-                            .foregroundColor((stateOfMindForDay.stateOfMind != nil && stateOfMindForDay.hasDailyMood) ? .white : (dayOfMonth > today) ? Color(.tertiaryLabel) : .primary)
+                            .foregroundColor(
+                                readStateOfMindModel.dayHasDailyMood(state: stateOfMindForDay)
+                                ? .white
+                                : (dayOfMonth > today) ? Color(.tertiaryLabel) : .primary
+                            )
                             .contentTransition(.numericText())
                     }
-                    if stateOfMindForDay.hasEmotions {
+                    if readStateOfMindModel.dayHasEmotions(state: stateOfMindForDay) {
                         Image(systemName: "circle.fill")
                             .resizable()
                             .scaledToFit()
@@ -204,8 +211,10 @@ struct StatesOfMindCalendarView: View {
             LazyVGrid(columns: columns) {
                 DaysOfWeekView()
                 
-                ForEach(1...readStateOfMindModel.calendarStartPaddings, id: \.self) {index in
-                    Text("")
+                if (1 <= readStateOfMindModel.calendarStartPaddings){
+                    ForEach(1...readStateOfMindModel.calendarStartPaddings, id: \.self) {index in
+                        Text("")
+                    }
                 }
                 
                 DaysOfMonthView(
