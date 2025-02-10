@@ -16,32 +16,6 @@ struct StateOfMindForADayView: View {
     var stateOfMindForDay: ReadStateOfMindViewModel.StateOfMindForDay {
         readStateOfMindModel.stateOfMindForDay(date: clickedDate.date)
     }
-    @State private var showLogView = false
-    
-    //    let testStateOfMindForDay: ReadStateOfMindViewModel.StateOfMindForDay =
-    //    [Date(): [
-    //        HKStateOfMind(
-    //            date: Date(),
-    //            kind: .momentaryEmotion,
-    //            valence: -1,
-    //            labels: [],
-    //            associations: []
-    //        ),
-    //        HKStateOfMind(
-    //            date: Date(),
-    //            kind: .momentaryEmotion,
-    //            valence: 0,
-    //            labels: [],
-    //            associations: []
-    //        ),
-    //        HKStateOfMind(
-    //            date: Date(),
-    //            kind: .dailyMood,
-    //            valence: 1,
-    //            labels: [],
-    //            associations: []
-    //        ),
-    //    ]]
     
     var dayHasDailyMood: Bool {
         readStateOfMindModel.dayHasDailyMood(state: stateOfMindForDay)
@@ -125,7 +99,7 @@ struct StateOfMindForADayView: View {
                 .padding()
                 
                 Button {
-                    showLogView = true
+                    logStateOfMindModel.isShowingLogView = true
                 } label: {
                     Text("Log")
                         .font(.headline)
@@ -144,12 +118,14 @@ struct StateOfMindForADayView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showLogView) {
+        .sheet(isPresented: $logStateOfMindModel.isShowingLogView) {
             NavigationStack {
                 if clickedDate.date.normalizedDate < Date().normalizedDate  {
                     LogStateOfMindView(
                         logStateOfMindModel: $logStateOfMindModel,
-                        bigPrevDate: clickedDate.date,
+                        bigPrevDate: Calendar.current.date(
+                            bySettingHour: 12, minute: 0, second: 0, of: clickedDate.date
+                        ),
                         isPrevLog: true
                     )
                 } else {

@@ -56,7 +56,7 @@ struct LogStateOfMindView: View {
                         NavigationLink(destination: LogEmotion(
                             logStateOfMindModel: $logStateOfMindModel,
                             prevDate: bigPrevDate ?? Date(),
-                            isPrevLog: true
+                            isPrevLog: isPrevLog
                         )) {
                             ChoiceCard(
                                 labelText: "Emotion",
@@ -68,7 +68,7 @@ struct LogStateOfMindView: View {
                         NavigationLink(destination: LogMood(
                             logStateOfMindModel: $logStateOfMindModel,
                             prevDate: bigPrevDate ?? Date(),
-                            isPrevLog: false
+                            isPrevLog: isPrevLog
                         )) {
                             ChoiceCard(
                                 labelText: "Mood",

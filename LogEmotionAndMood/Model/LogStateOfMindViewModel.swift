@@ -16,6 +16,7 @@ class LogStateOfMindViewModel {
     // MARK: View Properties
     var isShowingLogStateOfMind: Bool = false
     var isShowingStateForADay: Bool = false
+    var isShowingLogView: Bool = false
     var moodValence: CGFloat = 0
     
     var feeling: String {
@@ -46,6 +47,7 @@ class LogStateOfMindViewModel {
     
     func cancelStateOfMindFlow() {
         self.isShowingLogStateOfMind = false
+        self.isShowingLogView = false
         self.moodValence = 0
         self.selectedLabels = []
         self.selectedAssociations = []

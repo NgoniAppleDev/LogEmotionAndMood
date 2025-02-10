@@ -18,9 +18,7 @@ struct LogStateOfMindValence: View {
     let today: Date = Date()
     
     var body: some View {
-        print("prev date: \(prevDate), today: \(today), \(today.normalizedDate <= prevDate.normalizedDate)")
-        
-        return ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
@@ -28,14 +26,15 @@ struct LogStateOfMindValence: View {
                         IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood)
                         
                         Slider(value: $logStateOfMindModel.moodValence.animation(), in: -1...1, step: 0.25)
-                        .tint(logStateOfMindModel.faceColor)
-                        .accentColor(logStateOfMindModel.faceColor)
+                            .tint(logStateOfMindModel.faceColor)
+                            .accentColor(logStateOfMindModel.faceColor)
                     }
                     .padding()
                 }
                 
-                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: logStateOfMindModel, prevDate: prevDate)
-                ) {
+                NavigationLink(destination: LogStateOfMindDescription(
+                    logStateOfMindModel: logStateOfMindModel, prevDate: prevDate
+                )) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(logStateOfMindModel.selectedMood == Images.noneFace ? .black : .white)
@@ -61,7 +60,7 @@ struct LogStateOfMindValence: View {
     @ViewBuilder
     func TopTitle() -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(isPrevLog ? "How You Felt" : "How Do You Feel")
+            Text(isPrevLog == false ? "How Do You Feel" : "How You Felt")
                 .font(.title.bold())
             VStack(alignment: .leading) {
                 Text(isPrevLog == false ? "Now:" : kind == .momentaryEmotion ? "in the previous moment" : "that day?")
@@ -79,7 +78,7 @@ struct LogStateOfMindValence: View {
 #Preview {
     NavigationStack {
         LogStateOfMindValence(logStateOfMindModel:
-            LogStateOfMindViewModel()
+                                LogStateOfMindViewModel()
         )
     }
 }
