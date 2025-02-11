@@ -66,8 +66,6 @@ struct LogStateOfMindDescription: View {
                         .padding(.vertical)
                         
                     }
-                    
-
                 }
                 
                 NavigationLink(destination: LogStateOfMindAssociation(
@@ -84,17 +82,17 @@ struct LogStateOfMindDescription: View {
                 .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
             }
             .padding()
-            .toolbar {
-                Button("Cancel") {
-                    logStateOfMindModel.cancelStateOfMindFlow()
-                    dismiss()
-                }
+        }
+        .toolbar {
+            Button("Cancel") {
+                logStateOfMindModel.cancelStateOfMindFlow()
+                dismiss()
             }
-            .sheet(isPresented: $isShowingMore) {
-                NavigationStack {
-                    MoreStateOfMindLabels(selectedLabels: logStateOfMindModel.selectedLabels) { updatedLabels in
-                        logStateOfMindModel.selectedLabels = updatedLabels
-                    }
+        }
+        .sheet(isPresented: $isShowingMore) {
+            NavigationStack {
+                MoreStateOfMindLabels(selectedLabels: logStateOfMindModel.selectedLabels) { updatedLabels in
+                    logStateOfMindModel.selectedLabels = updatedLabels
                 }
             }
         }

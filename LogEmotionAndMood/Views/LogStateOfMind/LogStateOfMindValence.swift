@@ -22,7 +22,11 @@ struct LogStateOfMindValence: View {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
-                        TopTitle()
+                        TopTitle(
+                            logStateOfMindModel: logStateOfMindModel,
+                            kind: kind,
+                            isPrevLog: isPrevLog
+                        )
                         IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood)
                         
                         Slider(value: $logStateOfMindModel.moodValence.animation(), in: -1...1, step: 0.25)
@@ -32,9 +36,12 @@ struct LogStateOfMindValence: View {
                     .padding()
                 }
                 
-                NavigationLink(destination: LogStateOfMindDescription(
-                    logStateOfMindModel: logStateOfMindModel, prevDate: prevDate
-                )) {
+                NavigationLink(destination:
+                LogStateOfMindDescription(
+                    logStateOfMindModel: logStateOfMindModel,
+                    prevDate: prevDate
+                )
+                ) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(logStateOfMindModel.selectedMood == Images.noneFace ? .black : .white)
@@ -56,9 +63,22 @@ struct LogStateOfMindValence: View {
             }
         }
     }
+}
+
+#Preview {
+    NavigationStack {
+        LogStateOfMindValence(logStateOfMindModel:
+                                LogStateOfMindViewModel()
+        )
+    }
+}
+
+struct TopTitle: View {
+    var logStateOfMindModel: LogStateOfMindViewModel
+    var kind: HKStateOfMind.Kind
+    var isPrevLog: Bool
     
-    @ViewBuilder
-    func TopTitle() -> some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(isPrevLog == false ? "How Do You Feel" : "How You Felt")
                 .font(.title.bold())
@@ -75,10 +95,3 @@ struct LogStateOfMindValence: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        LogStateOfMindValence(logStateOfMindModel:
-                                LogStateOfMindViewModel()
-        )
-    }
-}

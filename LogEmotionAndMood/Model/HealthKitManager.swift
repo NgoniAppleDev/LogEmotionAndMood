@@ -61,6 +61,8 @@ class HealthKitManager {
     }
     
     func queryStateOfMindData() async -> [HKStateOfMind] {
+        print("Query State of Mind Called.")
+        
         do {
             
             let mindDescriptor = HKSampleQueryDescriptor(

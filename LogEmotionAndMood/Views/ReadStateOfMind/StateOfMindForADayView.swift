@@ -13,6 +13,7 @@ struct StateOfMindForADayView: View {
     @Binding var logStateOfMindModel: LogStateOfMindViewModel
     var readStateOfMindModel: ReadStateOfMindViewModel
     var clickedDate: ClickedDate
+    
     var stateOfMindForDay: ReadStateOfMindViewModel.StateOfMindForDay {
         readStateOfMindModel.stateOfMindForDay(date: clickedDate.date)
     }
@@ -135,6 +136,9 @@ struct StateOfMindForADayView: View {
                 }
             }
             .presentationDetents([.large])
+        }
+        .task {
+            await readStateOfMindModel.fetch()
         }
     }
 }
