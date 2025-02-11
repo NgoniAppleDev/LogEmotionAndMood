@@ -13,22 +13,22 @@ struct ClickedDate: Identifiable {
 }
 
 struct ReadStateOfMindData: View {
-    @State var readStateOfMindModel: ReadStateOfMindViewModel = .init()
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     @State private var clickedDate: ClickedDate?
     
     var body: some View {
         ZStackWithGradient {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    TopBigDateView(readStateOfMindModel: $readStateOfMindModel)
+                    TopBigDateView(readStateOfMindModel: readStateOfMindModel)
                     
                     TopActionButtons(
-                        readStateOfMindModel: $readStateOfMindModel
+                        readStateOfMindModel: readStateOfMindModel
                     )
                     
                     StatesOfMindCalendarView(
-                        readStateOfMindModel: $readStateOfMindModel,
+                        readStateOfMindModel: readStateOfMindModel,
                         clickedDate: $clickedDate
                     )
                 }
@@ -47,7 +47,7 @@ struct ReadStateOfMindData: View {
         .sheet(item: $clickedDate) { date in
             NavigationStack {
                 StateOfMindForADayView(
-                    logStateOfMindModel: $logStateOfMindModel,
+                    logStateOfMindModel: logStateOfMindModel,
                     readStateOfMindModel: readStateOfMindModel,
                     clickedDate: date
                 )
@@ -61,8 +61,8 @@ struct ReadStateOfMindData: View {
 #Preview {
     NavigationStack {
         ReadStateOfMindData(
-            readStateOfMindModel: ReadStateOfMindViewModel(),
-            logStateOfMindModel: .constant(LogStateOfMindViewModel())
+            logStateOfMindModel: LogStateOfMindViewModel(),
+            readStateOfMindModel: ReadStateOfMindViewModel()
         )
     }
 }
@@ -80,7 +80,7 @@ struct DaysOfWeekView: View {
 }
 
 struct DaysOfMonthView: View {
-    @Binding var readStateOfMindModel: ReadStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     @Binding var clickedDate: ClickedDate?
     
     var body: some View {
@@ -139,7 +139,7 @@ struct DaysOfMonthView: View {
 }
 
 struct TopActionButtons: View {
-    @Binding var readStateOfMindModel: ReadStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     
     var body: some View {
         HStack {
@@ -165,7 +165,7 @@ struct TopActionButtons: View {
 }
 
 struct TopBigDateView: View {
-    @Binding var readStateOfMindModel: ReadStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     
     var body: some View {
         HStack {
@@ -200,7 +200,7 @@ struct TopBigDateView: View {
 }
 
 struct StatesOfMindCalendarView: View {
-    @Binding var readStateOfMindModel: ReadStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     @Binding var clickedDate: ClickedDate?
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
@@ -216,7 +216,7 @@ struct StatesOfMindCalendarView: View {
                 }
                 
                 DaysOfMonthView(
-                    readStateOfMindModel: $readStateOfMindModel,
+                    readStateOfMindModel: readStateOfMindModel,
                     clickedDate: $clickedDate
                 )
             }

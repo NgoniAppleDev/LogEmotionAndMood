@@ -49,6 +49,8 @@ class HealthKitManager {
     }
     
     func save(sample: HKSample, healthStore: HKHealthStore) async {
+        await self.requestAuthorization()
+        
         do {
             try await healthStore.save(sample)
             print("Succeeded to save sample!")
@@ -62,6 +64,7 @@ class HealthKitManager {
     
     func queryStateOfMindData() async -> [HKStateOfMind] {
         print("Query State of Mind Called.")
+        await self.requestAuthorization()
         
         do {
             

@@ -10,7 +10,6 @@ import SwiftUI
 struct FlowLayoutView<Item: Hashable, Content: View>: View {
     let items: [Item]
     let content: (Item) -> Content
-    
     @State private var totalHeight: CGFloat = .zero
     
     var body: some View {
@@ -53,10 +52,6 @@ struct FlowLayoutView<Item: Hashable, Content: View>: View {
         .background(ViewHeightReader(height: $totalHeight)) // Capture total height dynamically
     }
 }
-
-//#Preview {
-//    FlowLayoutView()
-//}
 
 struct ViewHeightReader: View {
     @Binding var height: CGFloat

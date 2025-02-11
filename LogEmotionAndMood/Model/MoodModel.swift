@@ -9,9 +9,9 @@ import SwiftUI
 
 struct MoodModel: Identifiable {
     var id = UUID()
-    var feeling: String
-    var mood: Image
-    var color: Color
+//    var feeling: String
+//    var mood: Image
+//    var color: Color
     
     enum Mood: String {
         case veryUnpleasant = "Very Unpleasant"

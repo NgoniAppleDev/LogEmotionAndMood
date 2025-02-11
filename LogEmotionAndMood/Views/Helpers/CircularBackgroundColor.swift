@@ -9,20 +9,24 @@ import SwiftUI
 
 struct CircularBackgroundColor: View {
     var color: Color? = nil
+    let size: CGFloat = 300
+    let blurRadius: CGFloat = 200
+    let x: CGFloat = 100
+    let y: CGFloat = 150
     
     var body: some View {
         if let color {
             Circle()
                 .fill(color)
-                .frame(width: 300, height: 300)
-                .blur(radius: 200)
-                .offset(x: 100, y: 150)
+                .frame(width: size, height: size)
+                .blur(radius: blurRadius)
+                .offset(x: x, y: y)
         } else {
             Circle()
                 .fill(Color(.accent))
-                .frame(width: 300, height: 300)
-                .blur(radius: 200)
-                .offset(x: 100, y: 150)
+                .frame(width: size, height: size)
+                .blur(radius: blurRadius)
+                .offset(x: x, y: y)
         }
     }
 }

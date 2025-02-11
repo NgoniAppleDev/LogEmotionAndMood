@@ -9,19 +9,20 @@ import SwiftUI
 import HealthKit
 
 struct LogStateOfMindDescription: View {
-    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
-    var prevDate: Date = Date()
+    var prevDate: Date? = nil
     @State private var isShowingMore = false
     let adaptiveColumns = [GridItem(.adaptive(minimum: 75, maximum: 85))]
     
     var body: some View {
-        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        let extractedValues = logStateOfMindModel.extractedValues
+        
+        ZStackWithGradient(color: extractedValues.faceColor) {
             VStack {
                 ScrollView(showsIndicators: false) {
-                    IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood, animateIcon: false, size: .medium)
-                    Text(logStateOfMindModel.feeling)
-                        .foregroundStyle(logStateOfMindModel.faceColor)
+                    IconView(faceColor: extractedValues.faceColor, selectedMood: extractedValues.selectedMood, animateIcon: false, size: .medium)
+                    Text(extractedValues.feeling)
+                        .foregroundStyle(extractedValues.faceColor)
                         .font(.title.bold())
                         .padding(.vertical)
                     
@@ -31,7 +32,7 @@ struct LogStateOfMindDescription: View {
                                 .font(.title)
                             Text("Ngoni")
                                 .font(.largeTitle)
-                                .foregroundStyle(logStateOfMindModel.faceColor)
+                                .foregroundStyle(extractedValues.faceColor)
                             Spacer()
                         }
                         .fontWeight(.medium)
@@ -48,7 +49,7 @@ struct LogStateOfMindDescription: View {
                                 selectedItems: $logStateOfMindModel.selectedLabels,
                                 item: label,
                                 text: label.rawValue,
-                                faceColor: logStateOfMindModel.faceColor
+                                faceColor: extractedValues.faceColor
                             )
                         }
                         
@@ -79,14 +80,13 @@ struct LogStateOfMindDescription: View {
                         .contentShape(RoundedRectangle(cornerRadius: 12.0))
                 }
                 .buttonStyle(.plain)
-                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
+                .background(extractedValues.faceColor, in: .rect(cornerRadius: 12.0))
             }
             .padding()
         }
         .toolbar {
             Button("Cancel") {
                 logStateOfMindModel.cancelStateOfMindFlow()
-                dismiss()
             }
         }
         .sheet(isPresented: $isShowingMore) {

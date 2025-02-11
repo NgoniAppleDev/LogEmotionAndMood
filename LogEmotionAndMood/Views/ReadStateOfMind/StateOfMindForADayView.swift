@@ -10,7 +10,7 @@ import HealthKit
 
 struct StateOfMindForADayView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
     var readStateOfMindModel: ReadStateOfMindViewModel
     var clickedDate: ClickedDate
     
@@ -123,7 +123,7 @@ struct StateOfMindForADayView: View {
             NavigationStack {
                 if clickedDate.date.normalizedDate < Date().normalizedDate  {
                     LogStateOfMindView(
-                        logStateOfMindModel: $logStateOfMindModel,
+                        logStateOfMindModel: logStateOfMindModel,
                         bigPrevDate: Calendar.current.date(
                             bySettingHour: 12, minute: 0, second: 0, of: clickedDate.date
                         ),
@@ -131,7 +131,7 @@ struct StateOfMindForADayView: View {
                     )
                 } else {
                     LogStateOfMindView(
-                        logStateOfMindModel: $logStateOfMindModel
+                        logStateOfMindModel: logStateOfMindModel
                     )
                 }
             }
@@ -146,7 +146,7 @@ struct StateOfMindForADayView: View {
 #Preview {
     NavigationStack {
         StateOfMindForADayView(
-            logStateOfMindModel: .constant(LogStateOfMindViewModel()),
+            logStateOfMindModel: LogStateOfMindViewModel(),
             readStateOfMindModel: ReadStateOfMindViewModel(),
             clickedDate: ClickedDate(date: Date())
         )

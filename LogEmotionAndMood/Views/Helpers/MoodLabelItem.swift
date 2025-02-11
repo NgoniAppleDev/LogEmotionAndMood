@@ -31,8 +31,3 @@ struct MoodLabelItem<T: Hashable>: View {
         }
     }
 }
-
-
-//#Preview {
-//    MoodLabelItem()
-//}

@@ -37,10 +37,4 @@ struct Images {
     
     /// <a href="https://www.flaticon.com/free-icons/laugh" title="laugh icons">Laugh icons created by NajmunNahar - Flaticon</a>
     static let noneFace = Image(.wink)
-    
-    
-    
-    
-    
-    
 }

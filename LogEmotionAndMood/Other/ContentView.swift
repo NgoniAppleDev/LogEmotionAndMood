@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @Binding var enabled: Bool
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
+    @Bindable var readStateOfMindModel: ReadStateOfMindViewModel
     
     var body: some View {
         NavigationStack {
@@ -31,9 +32,9 @@ struct ContentView: View {
                                 Text("😃 How are you feeling?")
                                 Spacer()
                             }
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
                         }
                         .buttonStyle(.plain)
                     }
@@ -41,9 +42,15 @@ struct ContentView: View {
                     .listRowInsets(EdgeInsets())
                     
                     Section("Read State of Mind Data") {
-                        NavigationLink("See The Data", destination: ReadStateOfMindData(logStateOfMindModel: $logStateOfMindModel))
-                            .padding()
-                            .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
+                        NavigationLink(
+                            "See The Data",
+                            destination: ReadStateOfMindData(
+                                logStateOfMindModel: logStateOfMindModel,
+                                readStateOfMindModel: readStateOfMindModel
+                            )
+                        )
+                        .padding()
+                        .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
                     }
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
@@ -53,7 +60,9 @@ struct ContentView: View {
             .navigationTitle("Health Kit")
             .sheet(isPresented: $logStateOfMindModel.isShowingLogStateOfMind) {
                 NavigationStack {
-                    LogStateOfMindView(logStateOfMindModel: $logStateOfMindModel)
+                    LogStateOfMindView(
+                        logStateOfMindModel: logStateOfMindModel
+                    )
                 }
                 .interactiveDismissDisabled()
                 .presentationDetents([.large])
@@ -67,6 +76,7 @@ struct ContentView: View {
 #Preview {
     ContentView(
         enabled: .constant(false),
-        logStateOfMindModel: .constant(LogStateOfMindViewModel())
+        logStateOfMindModel: LogStateOfMindViewModel(),
+        readStateOfMindModel: ReadStateOfMindViewModel()
     )
 }

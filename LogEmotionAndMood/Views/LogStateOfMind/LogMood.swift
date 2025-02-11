@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct LogMood: View {
-    @Binding var logStateOfMindModel: LogStateOfMindViewModel
-    var prevDate: Date = Date()
+    @Bindable var logStateOfMindModel: LogStateOfMindViewModel
+    var prevDate: Date? = nil
     var isPrevLog: Bool = false
     
     var body: some View {
@@ -17,10 +17,9 @@ struct LogMood: View {
             logStateOfMindModel: logStateOfMindModel,
             prevDate: prevDate,
             isPrevLog: isPrevLog,
-            navTitle: "Mood",
-            kind: .dailyMood
+            navTitle: "Mood"
         )
-        .onAppear {
+        .task {
             logStateOfMindModel.kind = .dailyMood
         }
     }
@@ -28,6 +27,6 @@ struct LogMood: View {
 
 #Preview {
     NavigationStack {
-        LogMood(logStateOfMindModel: .constant(LogStateOfMindViewModel()))
+        LogMood(logStateOfMindModel: LogStateOfMindViewModel())
     }
 }

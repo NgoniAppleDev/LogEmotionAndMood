@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct LogStateOfMindAssociation: View {
-    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
-    var prevDate: Date = Date()
+    var prevDate: Date? = nil
     let adaptiveColumns = [GridItem(.adaptive(minimum: 80, maximum: 90))]
     
     var body: some View {
-        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        let extractedValues = logStateOfMindModel.extractedValues
+        
+        ZStackWithGradient(color: extractedValues.faceColor) {
             VStack {
                 ScrollView(showsIndicators: false) {
-                    IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood, animateIcon: false, size: .medium)
-                    Text(logStateOfMindModel.feeling)
-                        .foregroundStyle(logStateOfMindModel.faceColor)
+                    IconView(faceColor: extractedValues.faceColor, selectedMood: extractedValues.selectedMood, animateIcon: false, size: .medium)
+                    Text(extractedValues.feeling)
+                        .foregroundStyle(extractedValues.faceColor)
                         .font(.title.bold())
                         .padding(.vertical)
                     
@@ -29,7 +30,7 @@ struct LogStateOfMindAssociation: View {
                                 .font(.title)
                             Text("Ngoni")
                                 .font(.largeTitle)
-                                .foregroundStyle(logStateOfMindModel.faceColor)
+                                .foregroundStyle(extractedValues.faceColor)
                             Spacer()
                         }
                         .fontWeight(.medium)
@@ -47,7 +48,7 @@ struct LogStateOfMindAssociation: View {
                                     selectedItems: $logStateOfMindModel.selectedAssociations,
                                     item: association,
                                     text: association.rawValue,
-                                    faceColor: logStateOfMindModel.faceColor
+                                    faceColor: extractedValues.faceColor
                                 )
                             }
                             
@@ -56,7 +57,7 @@ struct LogStateOfMindAssociation: View {
                                     selectedItems: $logStateOfMindModel.selectedAssociations,
                                     item: association,
                                     text: association.rawValue,
-                                    faceColor: logStateOfMindModel.faceColor
+                                    faceColor: extractedValues.faceColor
                                 )
                             }
                             
@@ -65,7 +66,7 @@ struct LogStateOfMindAssociation: View {
                                     selectedItems: $logStateOfMindModel.selectedAssociations,
                                     item: association,
                                     text: association.rawValue,
-                                    faceColor: logStateOfMindModel.faceColor
+                                    faceColor: extractedValues.faceColor
                                 )
                             }
                         }
@@ -74,7 +75,7 @@ struct LogStateOfMindAssociation: View {
                 
                 Button {
                     Task {
-                        await logStateOfMindModel.saveStateOfMind(date: prevDate)
+                        await logStateOfMindModel.saveStateOfMind(date: prevDate ?? Date())
                         logStateOfMindModel.cancelStateOfMindFlow()
                     }
                 } label: {
@@ -86,14 +87,13 @@ struct LogStateOfMindAssociation: View {
                         .contentShape(RoundedRectangle(cornerRadius: 12.0))
                 }
                 .buttonStyle(.plain)
-                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
+                .background(extractedValues.faceColor, in: .rect(cornerRadius: 12.0))
                 .padding(.top, 20)
             }
             .padding()
             .toolbar {
                 Button("Cancel") {
                     logStateOfMindModel.cancelStateOfMindFlow()
-                    dismiss()
                 }
             }
         }

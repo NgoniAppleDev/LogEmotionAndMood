@@ -14,11 +14,11 @@ enum IconSize {
 
 struct IconView: View {
     var faceColor: Color
-    @State private var scale = false
     var selectedMood: Image
-    @State private var faceScale: CGFloat = 1
     var animateIcon: Bool = true
     var size: IconSize = .large
+    @State private var scale = false
+    @State private var faceScale: CGFloat = 1
     
     var body: some View {
         ZStack {
@@ -39,10 +39,10 @@ struct IconView: View {
         }
         .onChange(of: selectedMood, { _, _ in
             withAnimation {
-                faceScale = 0.5
+                faceScale = 0
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                withAnimation(.easeIn(duration: 0.2)) {
                     faceScale = 1
                 }
             }

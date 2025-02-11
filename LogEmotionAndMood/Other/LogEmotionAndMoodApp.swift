@@ -19,10 +19,15 @@ private let logger = Logger(
 struct LogEmotionAndMoodApp: App {
     @State private var healthKitManager: HealthKitManager = .init()
     @State var logStateOfMindModel: LogStateOfMindViewModel = .init()
+    @State var readStateOfMindModel: ReadStateOfMindViewModel = .init()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(enabled: $healthKitManager.authenticated, logStateOfMindModel: $logStateOfMindModel)
+            ContentView(
+                enabled: $healthKitManager.authenticated,
+                logStateOfMindModel: logStateOfMindModel,
+                readStateOfMindModel: readStateOfMindModel
+            )
                 .healthDataAccessRequest(
                     store: healthKitManager.healthStore,
                     shareTypes: healthKitManager.allTypes,

@@ -9,47 +9,43 @@ import HealthKit
 import SwiftUI
 
 struct LogStateOfMindValence: View {
-    @Environment(\.dismiss) var dismiss
     @Bindable var logStateOfMindModel: LogStateOfMindViewModel
-    var prevDate: Date = Date()
+    var prevDate: Date? = nil
     var isPrevLog: Bool = false
     var navTitle: String = "Emotion"
-    var kind: HKStateOfMind.Kind = .momentaryEmotion
     let today: Date = Date()
     
     var body: some View {
-        ZStackWithGradient(color: logStateOfMindModel.faceColor) {
+        let extractedValues = logStateOfMindModel.extractedValues
+        
+        ZStackWithGradient(color: extractedValues.faceColor) {
             VStack {
                 ScrollView {
                     VStack(spacing: 50) {
                         TopTitle(
-                            logStateOfMindModel: logStateOfMindModel,
-                            kind: kind,
+                            extractedValues: extractedValues,
                             isPrevLog: isPrevLog
                         )
-                        IconView(faceColor: logStateOfMindModel.faceColor, selectedMood: logStateOfMindModel.selectedMood)
+                        IconView(faceColor: extractedValues.faceColor, selectedMood: extractedValues.selectedMood)
                         
-                        Slider(value: $logStateOfMindModel.moodValence.animation(), in: -1...1, step: 0.25)
-                            .tint(logStateOfMindModel.faceColor)
-                            .accentColor(logStateOfMindModel.faceColor)
+                        Slider(
+                            value: $logStateOfMindModel.moodValence.animation(),
+                            in: -1...1, step: 0.25
+                        )
+                        .tint(extractedValues.faceColor)
                     }
                     .padding()
                 }
                 
-                NavigationLink(destination:
-                LogStateOfMindDescription(
-                    logStateOfMindModel: logStateOfMindModel,
-                    prevDate: prevDate
-                )
-                ) {
+                NavigationLink(destination: LogStateOfMindDescription(logStateOfMindModel: logStateOfMindModel, prevDate: prevDate)) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
-                        .foregroundStyle(logStateOfMindModel.selectedMood == Images.noneFace ? .black : .white)
+                        .foregroundStyle(extractedValues.selectedMood == Images.noneFace ? .black : .white)
                         .font(.headline)
                         .contentShape(RoundedRectangle(cornerRadius: 12.0))
                 }
                 .padding()
-                .background(logStateOfMindModel.faceColor, in: .rect(cornerRadius: 12.0))
+                .background(extractedValues.faceColor, in: .rect(cornerRadius: 12.0))
                 .padding(.horizontal)
                 .buttonStyle(.plain)
             }
@@ -59,7 +55,6 @@ struct LogStateOfMindValence: View {
         .toolbar {
             Button("Cancel") {
                 logStateOfMindModel.cancelStateOfMindFlow()
-                dismiss()
             }
         }
     }
@@ -67,15 +62,12 @@ struct LogStateOfMindValence: View {
 
 #Preview {
     NavigationStack {
-        LogStateOfMindValence(logStateOfMindModel:
-                                LogStateOfMindViewModel()
-        )
+        LogStateOfMindValence(logStateOfMindModel: LogStateOfMindViewModel())
     }
 }
 
 struct TopTitle: View {
-    var logStateOfMindModel: LogStateOfMindViewModel
-    var kind: HKStateOfMind.Kind
+    let extractedValues: (moodValence: Double, kind: HKStateOfMind.Kind, feeling: String, faceColor: Color, selectedMood: Image)
     var isPrevLog: Bool
     
     var body: some View {
@@ -83,11 +75,11 @@ struct TopTitle: View {
             Text(isPrevLog == false ? "How Do You Feel" : "How You Felt")
                 .font(.title.bold())
             VStack(alignment: .leading) {
-                Text(isPrevLog == false ? "Now:" : kind == .momentaryEmotion ? "in the previous moment" : "that day?")
+                Text(isPrevLog == false ? "Now:" : extractedValues.kind == .momentaryEmotion ? "in the previous moment" : "that day?")
                     .font(.title.bold())
-                Text(logStateOfMindModel.feeling)
-                    .contentTransition(.numericText(value: logStateOfMindModel.moodValence))
-                    .foregroundColor(logStateOfMindModel.faceColor)
+                Text(extractedValues.feeling)
+                    .contentTransition(.numericText(value: extractedValues.moodValence))
+                    .foregroundColor(extractedValues.faceColor)
                     .font(.largeTitle.bold())
             }
         }
