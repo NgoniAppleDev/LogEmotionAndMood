@@ -30,7 +30,7 @@ struct LogStateOfMindValence: View {
                         
                         Slider(
                             value: $logStateOfMindModel.moodValence.animation(),
-                            in: -1...1, step: 0.25
+                            in: -1...1
                         )
                         .tint(extractedValues.faceColor)
                     }

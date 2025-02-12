@@ -17,8 +17,18 @@ struct IconView: View {
     var selectedMood: Image
     var animateIcon: Bool = true
     var size: IconSize = .large
+    
     @State private var scale = false
-    @State private var faceScale: CGFloat = 1
+    @State private var moodOpacity: Double = 1
+    @State private var currentMood: Image
+    
+    init(faceColor: Color, selectedMood: Image, animateIcon: Bool = true, size: IconSize = .large) {
+        self.faceColor = faceColor
+        self.selectedMood = selectedMood
+        self.animateIcon = animateIcon
+        self.size = size
+        _currentMood = State(initialValue: selectedMood) // Initialize with selected mood
+    }
     
     var body: some View {
         ZStack {
@@ -32,18 +42,24 @@ struct IconView: View {
                 .opacity(scale ? 0 : 1)
                 .scaleEffect(scale ? 1: 0.2)
             
-            selectedMood
-                .resizable().scaledToFill()
+            // Mood icon
+            currentMood
+                .resizable()
+                .scaledToFill()
                 .frame(width: size == .large ? 150 : 110, height: size == .large ? 150 : 110)
-                .scaleEffect(faceScale)
+                .opacity(moodOpacity)
+                .transition(.opacity) // Smoothly fade in and out
         }
-        .onChange(of: selectedMood, { _, _ in
-            withAnimation {
-                faceScale = 0
+        .onChange(of: selectedMood, { _, newMood in
+            withAnimation(.easeOut(duration: 0.2)) {
+                moodOpacity = 0.85 // Fade out
             }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                withAnimation(.easeIn(duration: 0.2)) {
-                    faceScale = 1
+                currentMood = newMood // Change the image
+                
+                withAnimation(.easeIn(duration: 0.3)) {
+                    moodOpacity = 1 // Fade back in
                 }
             }
         })

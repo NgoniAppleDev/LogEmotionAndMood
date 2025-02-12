@@ -9,9 +9,6 @@ import SwiftUI
 
 struct MoodModel: Identifiable {
     var id = UUID()
-//    var feeling: String
-//    var mood: Image
-//    var color: Color
     
     enum Mood: String {
         case veryUnpleasant = "Very Unpleasant"
@@ -27,13 +24,13 @@ struct MoodModel: Identifiable {
             case .veryUnpleasant:
                     .indigo
             case .unPleasant:
-                    .indigo
+                    .purple
             case .slightlyUnpleasant:
                     .blue
             case .neutral:
                     .cyan
             case .slightlyPleasant:
-                    .teal
+                    .green
             case .pleasant:
                     .yellow
             case .veryPleasant:
@@ -109,47 +106,55 @@ struct MoodModel: Identifiable {
          )
     ]
     
-    static func interpolatedColor(for value: Double) -> Color {
-        let moodColors: [Color] = [
-            Mood.veryUnpleasant.getColor(),  // Very Unpleasant
-            Mood.veryUnpleasant.getColor(),  // Very Unpleasant
-            Mood.unPleasant.getColor(),     // Unpleasant
-            Mood.slightlyUnpleasant.getColor(),  // Slightly Unpleasant
-            Mood.neutral.getColor(),  // Neutral
-            Mood.slightlyPleasant.getColor(),   // Slightly Pleasant
-            Mood.pleasant.getColor(),    // Pleasant
-            Mood.veryPleasant.getColor(),   // Very Pleasant
-            Mood.veryPleasant.getColor()   // Very Pleasant
-        ]
+    
+    static func interpolatedMoodMapping(for value: Double) -> (feeling: String, faceColor: Color, selectedMood: Image) {
+        let sortedKeys = moodMappings.keys.sorted()
         
-        let minValue: Double = -1
-        let maxValue: Double = 1
+        // Find two closest keys
+        guard let lower = sortedKeys.last(where: { $0 <= value }),
+              let upper = sortedKeys.first(where: { $0 >= value }),
+              let lowerMood = moodMappings[lower],
+              let upperMood = moodMappings[upper] else {
+            return moodMappings[0]!  // Default to neutral if something goes wrong
+        }
         
-        let normalizedValue = (value - minValue) / (maxValue - minValue) // Convert range to 0...1
-        let steps = Double(moodColors.count - 1)
-        let position = normalizedValue * steps
-        let lowerIndex = Int(position)
-        let upperIndex = min(lowerIndex + 1, moodColors.count - 1)
-        let fraction = position - Double(lowerIndex)
+        // If exact match, return directly
+        if lower == upper { return lowerMood }
         
-        return blend(moodColors[lowerIndex], moodColors[upperIndex], fraction: fraction)
+        // Calculate interpolation factor (0 to 1)
+        let factor = (value - lower) / (upper - lower)
+        
+        // Interpolate color
+        let interpolatedColor = Color(
+            red: lowerMood.faceColor.components.red + factor * (upperMood.faceColor.components.red - lowerMood.faceColor.components.red),
+            green: lowerMood.faceColor.components.green + factor * (upperMood.faceColor.components.green - lowerMood.faceColor.components.green),
+            blue: lowerMood.faceColor.components.blue + factor * (upperMood.faceColor.components.blue - lowerMood.faceColor.components.blue)
+        )
+        
+        // Interpolate text
+        let interpolatedFeeling = interpolateMoodText(lowerMood.feeling, upperMood.feeling, factor)
+        
+        // Interpolate image (Choose closer one)
+        let interpolatedImage = factor < 0.5 ? lowerMood.selectedMood : upperMood.selectedMood
+        
+        return (interpolatedFeeling, interpolatedColor, interpolatedImage)
     }
     
-    static func blend(_ color1: Color, _ color2: Color, fraction: Double) -> Color {
-        let uiColor1 = UIColor(color1)
-        let uiColor2 = UIColor(color2)
-        
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
-        uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
-        uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
-        
-        let r = r1 + (r2 - r1) * CGFloat(fraction)
-        let g = g1 + (g2 - g1) * CGFloat(fraction)
-        let b = b1 + (b2 - b1) * CGFloat(fraction)
-        let a = a1 + (a2 - a1) * CGFloat(fraction)
-        
-        return Color(UIColor(red: r, green: g, blue: b, alpha: a))
+    static func interpolateMoodText(_ lower: String, _ upper: String, _ factor: Double) -> String {
+        return factor < 0.5 ? lower : upper  // Pick the dominant mood
+    }
+    
+}
+
+// Color extension to get RGB components
+extension Color {
+    var components: (red: Double, green: Double, blue: Double) {
+        #if canImport(UIKit)
+        typealias NativeColor = UIColor
+        #else
+        typealias NativeColor = NSColor
+        #endif
+        guard let components = NativeColor(self).cgColor.components else { return (0, 0, 0) }
+        return (Double(components[0]), Double(components[1]), Double(components[2]))
     }
 }
