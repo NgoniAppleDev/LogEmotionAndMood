@@ -23,6 +23,14 @@ extension Date {
     var customDate: String {
         return self.formatted(.dateTime.weekday()) + ", " + self.formatted(.dateTime.day(.twoDigits)) + " " + self.formatted(.dateTime.month())
     }
+    
+    func getComponents(_ components: Set<Calendar.Component>) -> DateComponents {
+        return Calendar.current.dateComponents(components, from: self)
+    }
+    
+    init(year: Int = 2025, month: Int = 2, day: Int = 1){
+        self = Calendar.current.date(from: DateComponents(year: year, month: month, day: day)) ?? Date()
+    }
 }
 
 // dictionaries are awesome to store data, because to retrieve data they have O(1) -> big O of 1.

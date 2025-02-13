@@ -54,6 +54,17 @@ struct ContentView: View {
                     }
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
+                    
+                    Section("Insights") {
+                        NavigationLink(
+                            "Analyze the Data",
+                            destination: Insights()
+                        )
+                        .padding()
+                        .background(.ultraThinMaterial, in: .rect(cornerRadius: 12.0))
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
                 }
                 .scrollContentBackground(.hidden)
             }

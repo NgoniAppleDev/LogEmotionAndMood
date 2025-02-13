@@ -155,27 +155,26 @@ struct StateOfMindForADayView: View {
 
 struct DailyMoodView: View {
     var stateOfMind: HKStateOfMind?
+    var moodValence: Double? {
+        stateOfMind?.valence
+    }
+    var interpolatedMood: (feeling: String, faceColor: Color, selectedMood: Image) {
+        MoodModel.interpolatedMoodMapping(for: moodValence ?? 0)
+    }
     var feeling: String {
-        MoodModel.moodMappings[stateOfMind?.valence != nil ? stateOfMind!.valence : 0]!.feeling
+        return interpolatedMood.feeling
     }
     
     var body: some View {
         VStack {
             Group {
-                if let stateOfMind {
-                    IconView(
-                        faceColor: MoodModel.moodMappings[stateOfMind.valence]?.faceColor ?? MoodModel.Mood.neutral.getColor(),
-                        selectedMood: MoodModel.moodMappings[stateOfMind.valence]?.selectedMood ?? MoodModel.Mood.neutral.getSelectedMood(),
-                        animateIcon: false,
-                        size: .medium
-                    )
-                } else {
-                    IconView(
-                        faceColor: MoodModel.Mood.neutral.getColor(),
-                        selectedMood: MoodModel.Mood.neutral.getSelectedMood(),
-                        animateIcon: false
-                    )
-                }
+                IconView(
+                    faceColor: interpolatedMood.faceColor,
+                    selectedMood: interpolatedMood.selectedMood,
+                    animateIcon: false,
+                    size: .medium
+                )
+                
             }
             .padding(.bottom, 20)
             

@@ -21,11 +21,13 @@ class ReadStateOfMindViewModel {
             updateMonthDays()
         }
     }
-    private var savedStatesOfMind: [StateOfMindForDay] = [] {
+    
+    var savedStatesOfMind: [StateOfMindForDay] = [] {
         didSet {
             updateMonthDays()
         }
     }
+    
     var monthDays = [Date]()
     
     var startOfMonth: Date = Date()
@@ -108,9 +110,14 @@ class ReadStateOfMindViewModel {
     }
     
     func getDailyMoodColor(state: StateOfMindForDay) -> Color {
-        return MoodModel.moodMappings[
-            getDailyMoodForDay(state: state)?.valence ?? 0
-        ]?.faceColor ?? Color.clear
+        let moodValence = getDailyMoodForDay(state: state)?.valence
+        let interpolatedMood = MoodModel.interpolatedMoodMapping(for: moodValence ?? 0)
+        
+//        return MoodModel.moodMappings[
+//            moodValence ?? 0
+//        ]?.faceColor ?? Color.clear
+        
+        return interpolatedMood.faceColor
     }
     
     private func updateMonthDays() {
